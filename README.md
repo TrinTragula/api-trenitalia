@@ -63,7 +63,7 @@ Il progetto è ancora in fase embrionale, ma fa bene ciò che deve fare e spero 
   ```
   
 ## Ringraziamenti:
-Purtroppo sono API piuttosto convolute e non troppo intuitive, ma per questo ringrazio il fondamentale aiuto di questo progetto:  
+Purtroppo sono API piuttosto convolute e poco intuitive, per questo ringrazio il fondamentale aiuto di questo progetto:  
 [Trenitalia-API di SimoDax, una wiki sul loro funzionamento](https://github.com/SimoDax/Trenitalia-API)  
 Andate pure a visitare il suo sito @ http://simodax.github.io/  
 
