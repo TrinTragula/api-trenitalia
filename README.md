@@ -1,6 +1,6 @@
 # api-trenitalia
-### API di trenitalia messe a disposizione tramite il portale lefrecce.it
-src="https://camo.githubusercontent.com/f5901b35cf63acd4e1225f44345c5f974fad0749/68747470733a2f2f63646e2d696d616765732d312e6d656469756d2e636f6d2f6d61782f3830302f312a306672335062543258716a734d4435327363322d4e512e706e67" width="48"> 
+### API di trenitalia messe a disposizione tramite il portale lefrecce.it <img src="https://camo.githubusercontent.com/f5901b35cf63acd4e1225f44345c5f974fad0749/68747470733a2f2f63646e2d696d616765732d312e6d656469756d2e636f6d2f6d61782f3830302f312a306672335062543258716a734d4435327363322d4e512e706e67" width="48"> 
+
 [Link al pacchetto npm](https://www.npmjs.com/package/api-trenitalia)
 
 Un semplice wrapper per le API di Trenitalia messe a disposizione tramite il portale lefrecce.it
