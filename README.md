@@ -3,8 +3,7 @@
 
 [Link al pacchetto npm](https://www.npmjs.com/package/api-trenitalia)
 
-Un semplice wrapper per le API di Trenitalia messe a disposizione tramite il portale lefrecce.it
-
+Un semplice wrapper per le API di Trenitalia messe a disposizione tramite il portale lefrecce.it  
 Il progetto è ancora in fase embrionale, ma fa bene ciò che deve fare e spero presto di occcuparmi del resto.
 
 ## Feature:
@@ -64,16 +63,11 @@ Il progetto è ancora in fase embrionale, ma fa bene ciò che deve fare e spero 
   ```
   
 ## Ringraziamenti:
-Purtroppo sono API piuttosto convolute e non troppo intuitive, ma per questo ringrazio il fondamentale aiuto di questo progetto:
-
-[Trenitalia-API di SimoDax, una wiki sul loro funzionamento](https://github.com/SimoDax/Trenitalia-API)
-
-Andate pure a visitare il suo sito @ http://simodax.github.io/
+Purtroppo sono API piuttosto convolute e non troppo intuitive, ma per questo ringrazio il fondamentale aiuto di questo progetto:  
+[Trenitalia-API di SimoDax, una wiki sul loro funzionamento](https://github.com/SimoDax/Trenitalia-API)  
+Andate pure a visitare il suo sito @ http://simodax.github.io/  
 
 ## Chi sono io
-Io sono Trintragula (Daniele), dal 2017. **Non** usate questo codice per scopi malvagi e rispettate il servizio offerto.
-
-Probabilmente scriverò un articolo a riguardo su [blog.danielescarinci.com](blog.danielescarinci.com), una volta terminato il progetto.
-
+Io sono Trintragula (Daniele), dal 2017. **Non** usate questo codice per scopi malvagi e rispettate il servizio offerto. Probabilmente scriverò un articolo a riguardo su [blog.danielescarinci.com](blog.danielescarinci.com), una volta terminato il progetto.  
 Potete trovarmi scrivendo a dcat (at) protonmail.com
 
