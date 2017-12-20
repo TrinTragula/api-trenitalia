@@ -1,0 +1,30 @@
+{
+  "name": "api-trenitalia",
+  "version": "1.0.0",
+  "description": "Un modulo npm per l'utilizzo delle API di trenitalia messe a disposizione tramite il portale lefrecce.it Edit",
+  "main": "trenapi.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TrinTragula/api-trenitalia.git"
+  },
+  "keywords": [
+    "trenitalia",
+    "lefrecce.it",
+    "treni",
+    "api",
+    "viaggiatreno"
+  ],
+  "author": "Trintragula (Daniele)",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/TrinTragula/api-trenitalia/issues"
+  },
+  "homepage": "https://github.com/TrinTragula/api-trenitalia#readme",
+  "dependencies": {
+    "request": "^2.83.0",
+    "request-promise": "^4.2.2"
+  }
+}
