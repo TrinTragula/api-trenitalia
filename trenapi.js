@@ -83,7 +83,6 @@ class Trenapi {
         }
         return rp(options)
             .then(data => {
-                console.log(data);
                 return data;
             })
             .catch(err => {
