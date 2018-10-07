@@ -5,8 +5,8 @@ var rp = require('request-promise');
 // https://github.com/sabas/trenitalia
 
 class Trenapi {
-    constructor() {
-        this.apiUrl = "https://www.lefrecce.it/msite/api/";
+    constructor(apiUrl) {
+        this.apiUrl = apiUrl || "https://www.lefrecce.it/msite/api/";
     }
 
     // Funzione di autocompletamento, utile per form (ad esempio con select2)
