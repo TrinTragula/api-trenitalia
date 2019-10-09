@@ -69,5 +69,5 @@ Andate pure a visitare il suo sito @ http://simodax.github.io/
 
 ## Chi sono io
 Io sono Trintragula (Daniele), dal 2017. **Non** usate questo codice per scopi malvagi e rispettate il servizio offerto. Probabilmente scriverò un articolo a riguardo su [blog.danielescarinci.com](blog.danielescarinci.com), una volta terminato il progetto.  
-Potete trovarmi scrivendo a dcat (at) protonmail.com
+Potete trovarmi scrivendo a danielescarinci42 _(at)_ gmail _(dot)_ com
 
