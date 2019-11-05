@@ -1,4 +1,6 @@
-var rp = require('request-promise');
+const axios = require('axios');
+const axiosCookieJarSupport = require('axios-cookiejar-support').default;
+const tough = require('tough-cookie');
 
 // Grazie al lavoro di questi progetti:
 // https://github.com/SimoDax/Trenitalia-API/wiki/API-Trenitalia---lefrecce.it
@@ -6,114 +8,136 @@ var rp = require('request-promise');
 
 class Trenapi {
     constructor(apiUrl) {
-        this.apiUrl = apiUrl || "https://www.lefrecce.it/msite/api/";
+        this.cookieJar = new tough.CookieJar();
+        this.apiUrl = apiUrl || 'https://www.lefrecce.it/msite/api';
+        this.api = axios.create({
+            baseURL: this.apiUrl,
+            responseType: 'json',
+            headers: { 'User-Agent': 'api-trenitalia 2.0' },
+            withCredentials: true
+        });
+
+        // Supporto per sessioni (molte chiamate non funzionerebbero altrimenti)
+        axiosCookieJarSupport(this.api);
+        this.api.defaults.jar = new tough.CookieJar();
     }
 
-    // Funzione di autocompletamento, utile per form (ad esempio con select2)
-    autocomplete(text) {
-        let url = this.apiUrl + "geolocations/locations";
-        let qs = {
-            name: text
-        };
-        let options = {
-            uri: url,
-            qs
+    /**
+     * Funzione di autocompletamento nomi stazioni, torna un array di oggetti contenti id, nome e tag della stazione
+     * @param {string} text Testo da cercare 
+     */
+    async autocomplete(text) {
+        try {
+            const result = await this.api.get('/geolocations/locations', {
+                params: {
+                    name: text
+                }
+            });
+            return {
+                ok: result && result.data ? true : false,
+                data: result ? result.data : null
+            };
+        } catch {
+            return {
+                ok: false
+            };
         }
-
-        return rp(options)
-            .then(body => {
-                return JSON.parse(body);
-            })
-            .catch(err => {
-                return null;
-            });
     }
 
-    /*
-        Cerca soluzioni di viaggio in ANDATA. Prende questi parametri in input:
-            <partenza>: Il nome della stazione di partenza, come restituito dall'autocompletamento stazione
-            <arrivo>: Il nome della stazione di arrivo
-            <data>: Data in formato dd/mm/yyyy
-            <ora>: L'ora di partenza in formato hh
-            <adulti>: Il numero di passeggeri adulti
-            <bambini>: Il numero di passeggeri bambini
-    */
-    getSolutions(partenza, arrivo, data, ora, adulti, bambini) {
-        let url = this.apiUrl + "solutions";
-        let AR = "A";
-        let DIREZIONE = "A";
-        let FRECCE = "false";
-        let REGIONALI = "false";
-        let DATARITORNO = "";
-        let ORARITORNO = "";
-        let CODICE_CARTAFRECCIA = "";
-
-        let options = {
-            uri: url,
-            qs: {
-                origin: partenza,
-                destination: arrivo,
-                arflag: AR,
-                adate: data,
-                atime: ora,
-                adultno: adulti,
-                childno: bambini,
-                direction: DIREZIONE,
-                frecce: FRECCE,
-                onlyRegional: REGIONALI,
-                // rdate: DATARITORNO,
-                // rtime: ORARITORNO,
-                // codeList: CODICE_CARTAFRECCIA
-            }
-        };
-
-        return rp(options)
-            .then(body => {
-                return JSON.parse(body);
-            })
-            .catch(err => {
-                return null;
+    /**
+     * Cerca soluzioni di viaggio in ANDATA. Prende questi parametri in input:
+     * @param {string} stazionePartenza Il nome della stazione di partenza, come restituito dall'autocompletamento stazione
+     * @param {string} stazioneArrivo Il nome della stazione di arrivo
+     * @param {string} data Data in formato dd/mm/yyyy
+     * @param {string} ora L'ora di partenza in formato hh
+     * @param {int} adulti Il numero di passeggeri adulti
+     * @param {int} bambini Il numero di passeggeri bambini
+     * @param {boolean} soloFrecce Se si vogliono solo soluzioni relative a frecce
+     * @param {boolean} soloRegionali Se si vogliono solo soluzioni relative a treni regionali
+     * @param {string} codiceCartafreccia Eventuale codice cartafreccia
+     */
+    async getSolutions(stazionePartenza, stazioneArrivo, data, ora, adulti, bambini, soloFrecce, soloRegionali, codiceCartafreccia) {
+        try {
+            const result = await this.api.get('/solutions', {
+                params: {
+                    origin: stazionePartenza,
+                    destination: stazioneArrivo,
+                    arflag: 'A',
+                    adate: data,
+                    atime: ora,
+                    adultno: adulti,
+                    childno: bambini,
+                    direction: 'A',
+                    frecce: soloFrecce || false,
+                    onlyRegional: soloRegionali || false,
+                    codeList: codiceCartafreccia || undefined,
+                    positions: codiceCartafreccia ? 0 : undefined
+                }
             });
-    }
-
-    internalGetSolution(idSolution, type) {
-        let url = `${this.apiUrl}/solutions/${idSolution}/${type}`;
-        let options = {
-            uri: url
+            return {
+                ok: result && result.data ? true : false,
+                data: result ? result.data : null
+            };
+        } catch (error) {
+            return {
+                ok: false,
+                error: error
+            };
         }
-        return rp(options)
-            .then(data => {
-                return data;
-            })
-            .catch(err => {
-                console.log(err);
-                return null;
-            });
     }
 
-    // Dettagli di una soluzione
-    //https://www.lefrecce.it/msite/api/solutions/[IDSOLUTION]/details
-    // Funziona solo se c'è già una sessione aperta con il sito
-    getDetails(idSolution) {
-        return this.internalGetSolution(idSolution, "details");
+    /**
+     * Metodo di utility per gestire chiaamte simili alle API dato un ID soluzione
+     * @param {string} idSolution 
+     * @param {string} type 
+     */
+    async internalGetSolution(idSolution, type) {
+        try {
+            const result = await this.api.get(`/solutions/${idSolution}/${type}`);
+            return {
+                ok: result && result.data ? true : false,
+                data: result ? result.data : null
+            };
+        } catch (error) {
+            return {
+                ok: false,
+                error: error
+            };
+        }
     }
 
-    // Come getDetails, ma omette stoplist e servicelist
-    // Funziona solo se c'è già una sessione aperta con il sito
-    getInfo(idSolution) {
-        return this.internalGetSolution(idSolution, "info");
+    /**
+     * Dettagli di una soluzione
+     * Funziona solo se c'è già una sessione aperta con il sito
+     * @param {string} idSolution 
+     */
+    async getDetails(idSolution) {
+        return await this.internalGetSolution(idSolution, "details");
     }
 
-    // https://www.lefrecce.it/msite/api/solutions/[IDSOLUTION]/standardoffers
-    // Dettaglio prezzi soluzione
-    getPriceDetails(idSolution) {
-        return this.internalGetSolution(idSolution, "standardoffers");
+    /**
+     * Come getDetails, ma omette stoplist e servicelist
+     * Funziona solo se c'è già una sessione aperta con il sito
+     * @param {string} idSolution 
+     */
+    async getInfo(idSolution) {
+        return await this.internalGetSolution(idSolution, "info");
     }
 
-    // https://www.lefrecce.it/msite/api/solutions/[IDSOLUTION]/standardoffers
-    // Dettaglio prezzi soluzione, ma omette stoplist e servicelist
-    getCustomizedPriceDetails(idSolution) {
-        return this.internalGetSolution(idSolution, "customizedoffers");
+    /**
+     * Dettaglio prezzi soluzione
+     * @param {string} idSolution 
+     */
+    async getPriceDetails(idSolution) {
+        return await this.internalGetSolution(idSolution, "standardoffers");
+    }
+
+    /**
+     * Come getPriceDetails, ma omette stoplist e servicelist
+     * @param {string} idSolution 
+     */
+    async getCustomizedPriceDetails(idSolution) {
+        return await this.internalGetSolution(idSolution, "customizedoffers");
     }
 }
 
