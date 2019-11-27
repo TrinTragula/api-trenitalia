@@ -1,5 +1,6 @@
 # api-trenitalia <img src="https://camo.githubusercontent.com/f5901b35cf63acd4e1225f44345c5f974fad0749/68747470733a2f2f63646e2d696d616765732d312e6d656469756d2e636f6d2f6d61782f3830302f312a306672335062543258716a734d4435327363322d4e512e706e67" width="48"> 
-### API di trenitalia messe a disposizione tramite il portale lefrecce.it 
+
+## API di trenitalia messe a disposizione tramite il portale lefrecce.it 
 
 [Link al pacchetto npm](https://www.npmjs.com/package/api-trenitalia)
 
@@ -7,6 +8,7 @@ Un semplice wrapper per le API di Trenitalia messe a disposizione tramite il por
 Il progetto è ancora in fase embrionale, ma fa bene ciò che deve fare e spero presto di occcuparmi del resto.
 
 ## Feature:
+
 * Cercare un viaggio di sola andata
 * Autocompletamento
 * Cercare maggiori dettagli su una soluzione
@@ -15,6 +17,7 @@ Il progetto è ancora in fase embrionale, ma fa bene ciò che deve fare e spero 
 ## Esempio di utilizzo:
 
 * Cerca tutte le tratte dalla prima città autocompletata per "milan" fino a Bari, prende la prima soluzione e ne stampa i dettagli
+
   ```javascript
   var Trenitalia = require("api-trenitalia");
   var t = new Trenitalia();
@@ -32,7 +35,9 @@ Il progetto è ancora in fase embrionale, ma fa bene ciò che deve fare e spero 
         console.log(data);
     });
   ```
+
   Output:
+  
   ```
   [
     {
@@ -63,11 +68,12 @@ Il progetto è ancora in fase embrionale, ma fa bene ciò che deve fare e spero 
   ```
   
 ## Ringraziamenti:
+
 Purtroppo sono API piuttosto convolute e poco intuitive, per questo ringrazio il fondamentale aiuto di questo progetto:  
 [Trenitalia-API di SimoDax, una wiki sul loro funzionamento](https://github.com/SimoDax/Trenitalia-API)  
 Andate pure a visitare il suo sito @ http://simodax.github.io/  
 
 ## Chi sono io
+
 Io sono Trintragula (Daniele), dal 2017. **Non** usate questo codice per scopi malvagi e rispettate il servizio offerto. Probabilmente scriverò un articolo a riguardo su [blog.danielescarinci.com](blog.danielescarinci.com), una volta terminato il progetto.  
 Potete trovarmi scrivendo a danielescarinci42 _(at)_ gmail _(dot)_ com
-
