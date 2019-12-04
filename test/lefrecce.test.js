@@ -1,7 +1,7 @@
 const axios = require('axios');
 const MockAdapter = require('axios-mock-adapter');
 const moment = require('moment');
-const Trenapi = require('./trenapi');
+const Trenapi = require('../trenapi');
 
 const ROMA = "Roma Termini";
 const MILANO = "Milano Centrale";

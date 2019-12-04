@@ -2,12 +2,15 @@
 
 [![NPM](https://nodei.co/npm/api-trenitalia.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/api-trenitalia/)
 
-## API di trenitalia messe a disposizione tramite il portale lefrecce.it
+## API di trenitalia messe a disposizione tramite i portali [lefrecce.it](lefrecce.it) e [viaggiatreno.it](viaggiatreno.it) 
 
 [Link al pacchetto npm](https://www.npmjs.com/package/api-trenitalia)
 
-Un semplice wrapper per le API di Trenitalia messe a disposizione tramite il portale lefrecce.it  
+Un semplice wrapper per le API di Trenitalia messe a disposizione tramite i portale lefrecce.it e viaggiatreno.it.
+
 La versione 2.0 del progetto comprende ora molte più funzionalità legate all'account, nonché una rivisitazione del codice per renderlo più semplciemente utilizzabile e testabile.
+
+Le versione 3.0 porta invece un grande numero di nuove funzionalità tramite l'integrazione di chiamte alle api pubbliche di viaggiatreno.it
 
 ## Feature
 
@@ -19,6 +22,10 @@ La versione 2.0 del progetto comprende ora molte più funzionalità legate all'a
 * Dettagli account
 * Storico acquisti
 * Download di biglietti in PDF
+
+TODO: AGGIUNGERE FEATURE VIAGGIATRENO
+
+TODO: AGGIUNGERE ESEMPI VIAGGIATRENO
 
 ## Esempi di utilizzo
 

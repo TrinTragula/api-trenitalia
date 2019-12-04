@@ -58,3 +58,5 @@ typings/
 .env
 
 *.pdf
+.vscode/
+temp/

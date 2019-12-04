@@ -8,8 +8,32 @@ const axiosCookieJarSupport = require('axios-cookiejar-support').default;
 // https://github.com/SimoDax/Trenitalia-API/wiki/API-Trenitalia---lefrecce.it
 // https://github.com/sabas/trenitalia
 
+const OLD_STATIC_DATA_WARNING = `
+The stations static data file ('file/stations.json') is older than 3 months or empty. 
+I will download it again to keep it up to date.
+This should happen only the first time you use this APIs in your project (and every 3 months after that).
+`;
+
+const ERROR_STATIC_DATA_WARNING = `
+I couldn't load the stations static data file ('file/stations.json'). 
+I will now download it again. Untile the process isn't finished the module may not work as intended.
+This should happen only if something went terribly wrong in a previous download.
+`;
+
 class Trenapi {
-    constructor(apiUrl) {
+    constructor(apiUrl, viaggiaTrenoApiUrl) {
+        this._createApi(apiUrl);
+        this._createViaggiaTrenoApi(viaggiaTrenoApiUrl);
+        this._handleStaticData();
+    }
+
+    _sendError(message, error = null) {
+        if (!error) throw message;
+        throw `${message} - ${error.message ? error.message : 'Unknown error'}`;
+    }
+
+    _createApi(apiUrl) {
+        // Supporto API endpoint lefrecce
         this.cookieJar = new tough.CookieJar();
         this.apiUrl = apiUrl || 'https://www.lefrecce.it/msite/';
         this.api = axios.create({
@@ -25,9 +49,51 @@ class Trenapi {
         this.isLogged = false;
     }
 
-    _sendError(message, error = null) {
-        if (!error) throw message;
-        throw `${message} - ${error.message ? error.message : 'Unknown error'}`;
+    _createViaggiaTrenoApi(viaggiaTrenoApiUrl) {
+        // Supporto API endpoint viaggiatreno
+        this.viaggiatreno_cookieJar = new tough.CookieJar();
+        this.viaggiatreno_apiUrl = viaggiaTrenoApiUrl || 'http://www.viaggiatreno.it/viaggiatrenonew/resteasy/viaggiatreno/';
+        this.viaggiatreno = axios.create({
+            baseURL: this.viaggiatreno_apiUrl,
+            responseType: 'json',
+            headers: { 'User-Agent': 'api-trenitalia 2.0' },
+            withCredentials: true
+        });
+        axiosCookieJarSupport(this.viaggiatreno);
+        this.viaggiatreno.defaults.jar = new tough.CookieJar();
+    }
+
+    _handleStaticData() {
+        // Static data
+        this.staticDataFile = "files/stations.json";
+        try {
+            this.viaggiatreno_stations = JSON.parse(fs.readFileSync(this.staticDataFile));
+            const stats = fs.statSync(this.staticDataFile);
+            const mtime = stats.mtime;
+            const now = new Date();
+            const one_month = 3 * 30 * 24 * 60 * 60 * 1000;
+            if (this.viaggiatreno_stations.length == 0 || (now - mtime) > one_month) {
+                console.warn(OLD_STATIC_DATA_WARNING);
+                this._downloadStaticData();
+            };
+        } catch {
+            console.warn(ERROR_STATIC_DATA_WARNING);
+            this._downloadStaticData();
+        }
+    }
+
+    async _downloadStaticData() {
+        let iter = 0;
+        let allStations = [];
+        while (true) {
+            const result = await this.viaggiatreno.get(`elencoStazioni/${iter}`);
+            if (!result || !result.data || result.data.length <= 0) break;
+            allStations = allStations.concat(result.data);
+            iter++;
+        }
+        this.viaggiatreno_stations = allStations;
+        fs.writeFileSync(this.staticDataFile, JSON.stringify(allStations));
+        console.warn("Static data file downloaded and saved!");
     }
 
     /**
@@ -258,6 +324,54 @@ class Trenapi {
      */
     async getCustomizedPriceDetails(idSolution) {
         return await this.internalGetSolution(idSolution, "customizedoffers");
+    }
+
+    /**
+     * Ottiene i treni in partenza da una stazione ed informazioni su di essi
+     * @param {string} stazione Nome stazione così come fornito dall'autocompletamento 
+     * @param {Date} date Eventuale data, di default è ora
+     * @param {string} idStazione Se già si ha, id viaggiatreno della stazione
+     */
+    async getDeparturesFromStation(stazione, date = null, idStazione = null) {
+        return await this.internalGetFromStations("partenze", stazione, date, idStazione);
+    }
+
+    /**
+     * Ottiene i treni in arrivo ad una stazione ed informazioni su di essi
+     * @param {string} stazione Nome stazione così come fornito dall'autocompletamento 
+     * @param {Date} date Eventuale data, di default è ora
+     * @param {string} idStazione Se già si ha, id viaggiatreno della stazione
+     */
+    async getArrivalsFromStation(stazione, date = null, idStazione = null) {
+        return await this.internalGetFromStations("arrivi", stazione, date, idStazione);
+    }
+
+    /**
+     * Chiamata interna per ottente partenze o arrivi da una stazione
+     */
+    async internalGetFromStations(kind, stazione, date = null, idStazione = null) {
+        date = date || new Date();
+        if (!stazione && !idStazione) {
+            this._sendError("Fornire una stazione");
+        }
+        if (stazione && !idStazione) {
+            stazione = stazione.toLowerCase()
+            const mapped_station = this.viaggiatreno_stations
+                .find(s => (s.localita.nomeLungo.toLowerCase() == stazione) || (s.localita.nomeBreve.toLowerCase() == stazione));
+            if (mapped_station && mapped_station.localita && mapped_station.localita.id)
+                idStazione = mapped_station.localita.id;
+        }
+
+        if (!idStazione) {
+            this._sendError("Stazione non trovata");
+        }
+
+        try {
+            const result = await this.viaggiatreno.get(`${kind}/${idStazione}/${date}`);
+            return result ? result.data : null;
+        } catch (error) {
+            this._sendError('Error while retrieving the data', error);
+        }
     }
 }
 
