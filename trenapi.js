@@ -76,7 +76,7 @@ class Trenapi {
                 console.warn(OLD_STATIC_DATA_WARNING);
                 this._downloadStaticData();
             };
-        } catch {
+        } catch (error) {
             console.warn(ERROR_STATIC_DATA_WARNING);
             this._downloadStaticData();
         }

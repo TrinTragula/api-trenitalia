@@ -60,3 +60,5 @@ typings/
 *.pdf
 .vscode/
 temp/
+wiki.md
+todo.txt
