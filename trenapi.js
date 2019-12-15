@@ -355,19 +355,49 @@ class Trenapi {
             this._sendError("Fornire una stazione");
         }
         if (stazione && !idStazione) {
-            stazione = stazione.toLowerCase()
-            const mapped_station = this.viaggiatreno_stations
-                .find(s => (s.localita.nomeLungo.toLowerCase() == stazione) || (s.localita.nomeBreve.toLowerCase() == stazione));
-            if (mapped_station && mapped_station.localita && mapped_station.localita.id)
-                idStazione = mapped_station.localita.id;
+            idStazione = this._getStazione(stazione);
         }
-
         if (!idStazione) {
             this._sendError("Stazione non trovata");
         }
 
         try {
             const result = await this.viaggiatreno.get(`${kind}/${idStazione}/${date}`);
+            return result ? result.data : null;
+        } catch (error) {
+            this._sendError('Error while retrieving the data', error);
+        }
+    }
+
+    // Ottiene un idStazione a partire da una stazione, se possibile
+    _getStazione(stazione) {
+        let idStazione = null;
+        stazione = stazione.toLowerCase()
+        const mapped_station = this.viaggiatreno_stations
+            .find(s => (s.localita.nomeLungo.toLowerCase() == stazione) || (s.localita.nomeBreve.toLowerCase() == stazione));
+        if (mapped_station && mapped_station.localita && mapped_station.localita.id)
+            idStazione = mapped_station.localita.id;
+        return idStazione;
+    }
+
+    /**
+     * Ottiene lo stato di un treno con informazioni relative al suo percorso, eventuali ritardi, rilevazioni e fermate
+     * @param {*} stazionePartenza 
+     * @param {*} idTreno 
+     */
+    async getTrainStatus(stazionePartenza, idTreno, idStazionePartenza = null) {
+        if (!stazionePartenza && !idStazionePartenza) {
+            this._sendError("Fornire una stazione di partenza");
+        }
+        if (stazionePartenza && !idStazionePartenza) {
+            idStazionePartenza = this._getStazione(stazionePartenza);
+        }
+        if (!idStazionePartenza) {
+            this._sendError("Stazione di partenza non trovata");
+        }
+
+        try {
+            const result = await this.viaggiatreno.get(`andamentoTreno/${idStazionePartenza}/${idTreno}`);
             return result ? result.data : null;
         } catch (error) {
             this._sendError('Error while retrieving the data', error);
