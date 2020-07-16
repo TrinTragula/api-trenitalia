@@ -160,7 +160,7 @@ class Trenapi {
     }
 
     /**
-     * Funzione di autocompletamento nomi stazioni, torna un array di oggetti contenti id, nome e tag della stazione
+     * Funzione di autocompletamento nomi stazioni, torna un array dei primi 5 oggetti trovati,  contenti id, nome e tag della stazione
      * @param {string} text Testo da cercare 
      */
     async autocomplete(text) {

@@ -13,7 +13,7 @@ test('Inzializzazione: Le api contengono un\'istanza valida di axios', () => {
 
 test('Autocompletamento: Cercare per "Mil" trova Milano', async () => {
     const trenapi = new Trenapi();
-    const result = await trenapi.autocomplete('Mil');
+    const result = await trenapi.autocomplete('Milano centrale');
     expect(result.map(x => x.name.toLowerCase())).toContain(MILANO.toLowerCase());
 });
 
